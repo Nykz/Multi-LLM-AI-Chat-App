@@ -1,0 +1,18 @@
+/* You can add component-specific styles here */
+
+// Custom scrollbar styling for the main chat container
+main {
+  // For Webkit-based browsers (Chrome, Safari, new Edge)
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent; // Make the track background transparent
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #4a5568; // A subtle dark gray for the thumb
+    border-radius: 10px;
+  }
+}

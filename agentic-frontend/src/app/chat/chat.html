@@ -1,0 +1,108 @@
+<div
+  class="bg-gray-900 text-white h-screen w-screen flex items-center justify-center sm:p-4 font-sans"
+>
+  <div
+    class="flex flex-col w-full max-w-2xl h-full sm:max-h-[90%] bg-gray-800 sm:rounded-3xl shadow-2xl overflow-hidden"
+  >
+    <!-- Header -->
+    <header class="flex items-center p-4 border-b border-gray-700">
+      <i class="bi bi-chat-dots-fill text-3xl text-teal-600"></i>
+      <div class="ml-4">
+        <h1 class="text-xl font-bold">Technyks AI Chat</h1>
+        <p class="text-sm text-gray-400">Your AI assistants</p>
+      </div>
+    </header>
+
+    <!-- Chat History -->
+    <main #chatContainer class="flex-grow p-4 overflow-y-auto scroll-smooth">
+      <div class="flex flex-col space-y-4">
+        @if (history().length === 0 && !loading()) {
+        <div class="flex justify-center items-center h-full">
+          <p class="text-gray-500">Start the conversation by sending a message.</p>
+        </div>
+        } @for (message of history(); track message.id) {
+        <div
+          [ngClass]="{
+            'self-end items-end': message.from === 'user',
+            'self-start items-start': message.from === 'bot'
+          }"
+          class="flex flex-col"
+        >
+          <p
+            [ngClass]="{
+              'text-teal-400': message.from === 'user',
+              'text-gray-400': message.from === 'bot',
+              'me-3': message.from === 'user',
+              'ms-3': message.from === 'bot'
+            }"
+            class="text-xs mb-1"
+          >
+            @if (message.from === 'user') { You } @else {
+
+            <!-- dynamic bot name -->
+            @if(message?.modelName) {
+            {{ message.modelName }}
+            } @else { Sundari Bot } }
+          </p>
+          <div
+            [ngClass]="{
+              'bg-teal-600 rounded-br-none': message.from === 'user',
+              'bg-gray-700 rounded-bl-none': message.from === 'bot'
+            }"
+            class="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl"
+          >
+            <p class="text-sm" [class.whitespace-pre-wrap]="message.from === 'bot'">
+              {{ message.text }}
+            </p>
+          </div>
+        </div>
+        } @if (loading()) {
+        <div class="flex items-end justify-start">
+          <div class="bg-gray-700 rounded-bl-none px-4 py-3 rounded-2xl">
+            <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
+              <div
+                class="w-2 h-2 bg-teal-400 rounded-full animate-pulse [animation-delay:0.2s]"
+              ></div>
+              <div
+                class="w-2 h-2 bg-teal-400 rounded-full animate-pulse [animation-delay:0.4s]"
+              ></div>
+            </div>
+            <div class="mt-2 space-y-2">
+              <div class="h-2 bg-gray-600 rounded animate-pulse w-24"></div>
+              <div class="h-2 bg-gray-600 rounded animate-pulse w-32"></div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </main>
+
+    <!-- Input Form -->
+    <footer class="p-4 border-t border-gray-700">
+      <form (ngSubmit)="sendMessage()" class="flex items-center space-x-3">
+        <input
+          type="text"
+          name="message"
+          [ngModel]="message()"
+          (ngModelChange)="message.set($event)"
+          [disabled]="loading()"
+          placeholder="Type your message..."
+          class="flex-grow bg-gray-700 rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          [disabled]="loading() || !message()"
+          class="bg-teal-600 rounded-full w-12 h-12 flex items-center justify-center text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition disabled:bg-teal-600/50 disabled:cursor-not-allowed"
+        >
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </form>
+      @if (error()) {
+      <p class="text-red-400 text-sm mt-2 text-center">
+        {{ error() }}
+      </p>
+      }
+    </footer>
+  </div>
+</div>
